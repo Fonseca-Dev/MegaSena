@@ -56,9 +56,9 @@ class MainActivity : ComponentActivity() {
 fun MainApp() {
 
     val context = LocalContext.current
-    val preferences = context.getSharedPreferences("megasena", Context.MODE_PRIVATE)
+    val prefs = PreferencesManager(context)
     val result = remember {
-        mutableStateOf(preferences.getString(PREFS_KEY,"") ?: "")
+        mutableStateOf(prefs.getData(PREFS_KEY))
     }
     val textFieldValue = remember {
         mutableStateOf("")
@@ -114,7 +114,7 @@ fun MainApp() {
                     val inputIsValid = validateTextField(textFieldValue.value)
                     if (inputIsValid) {
                         result.value = generateRandomNumbers(textFieldValue.value.toInt())
-                        saveNumberSequence(preferences, result.value)
+                        prefs.saveData(PREFS_KEY, result.value)
                     } else {
                         Toast.makeText(
                             context,
@@ -150,12 +150,6 @@ fun generateRandomNumbers(qtde: Int): String {
     return numbers.joinToString(" - ")
 }
 
-fun saveNumberSequence(prefs: SharedPreferences, numberSequence: String) {
-    prefs.edit().apply {
-        putString(PREFS_KEY, numberSequence)
-        apply()
-    }
-}
 
 const val PREFS_KEY = "key_mega"
 
